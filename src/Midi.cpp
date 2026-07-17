@@ -40,8 +40,8 @@ Midi::Midi(std::string text)
             notes.push_back(dnote);
         }
         catch (const std::exception& e) {
-            // Évite le crash si le fichier .obj a un format de ligne corrompu
-            std::cerr << "Erreur lors du parsing d'une face : " << e.what() << "\n";
+            // Évite le crash si le fichier .csv a un format de ligne corrompu
+            std::cerr << "Erreur lors du parsing d'un fichier csv coté midi : " << e.what() << "\n";
         }
     }
 }

@@ -49,7 +49,7 @@ FFT::FFT(std::string text)
         }
         catch (const std::exception& e) {
             // Évite le crash si le fichier .csv a un format de ligne corrompu
-            std::cerr << "Erreur lors du parsing du fichier csv : " << e.what() << "\n";
+            std::cerr << "Erreur lors du parsing d'un fichier csv coté fft : " << e.what() << "\n";
         }
     }
 }
