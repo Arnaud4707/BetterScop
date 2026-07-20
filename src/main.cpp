@@ -77,13 +77,16 @@ int main(void)
 	Shader lightCubeShader("shader/shaderLightCube.vs", "shader/shaderLightCube.fs");
 	unsigned int VAO[1];
 	unsigned int lightVAO[1];
-	unsigned int VBO[1];
+	unsigned int VBO[2];
 	unsigned int texture1;
 	// unsigned int texture2;
 	ourShader.setDeltaTime(0.005);
 	ourShader.setRotationSpeed(2.0);
 	ObjectBlender obj("42.obj", "42.mtl");
-	Midi midi("midi.csv");
+	std::string pathFFT = "csv/meek_Mill_Rico_ftdrake/csv_from_fft/";
+	std::string pathMidi = "csv/meek_Mill_Rico_ftdrake/csv_from_midi/";
+	MusicEngine music(pathFFT + "bass_fft.csv", pathFFT + "drums_fft.csv", pathFFT + "guitar_fft.csv", pathFFT + "piano_fft.csv", pathFFT + "other_fft.csv", pathFFT + "vocals_fft.csv"
+				, pathMidi + "bass.csv", pathMidi + "drums.csv", pathMidi + "guitar.csv", pathMidi + "piano.csv", pathMidi + "other.csv", pathMidi + "vocals.csv");
 	texture1 = loadTexture((char const *)("texture/container.jpg"));
 	// texture2 = loadTexture((char const *)("texture/basketball.png"));
 	ourShader.use();
@@ -129,9 +132,11 @@ int main(void)
 	// ourShader.setFloat("material.shininess", mat.shininess);
 	int ch = fork();
 	if (ch == 0){
-		system("paplay audio/meek_Mill_Rico_ftdrake.mp3");
+		system("paplay audio/meek_Mill_Rico_ftdrake/meek_Mill_Rico_ftdrake.mp3");
 		exit(0);
 	}
+	std::cout << "ici" << std::endl;
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -143,23 +148,26 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		float pw = 0.0f;
 		float rotation = 0.0f;
 
-		for (auto note : midi.getNotes()){
-			if ((currentFrame >= note.getStart()) && (currentFrame <= note.getEnd())){
-				pw += note.getVelocity() / 127;
-				rotation += note.getPitch();
-			}
-		}
+		MusicState animation = music.update(currentFrame);
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		// glActiveTexture(GL_TEXTURE1);
 		// glBindTexture(GL_TEXTURE_2D, texture2);
-		objectAndLight(&ourShader, &model, &view, &projection, mode->width, mode->height, vec3(c.x, c.y, c.z));
+		objectAndLight(&ourShader, &model, &view, &projection, mode->width, mode->height, vec3(c.x, c.y, c.z), animation);
 		// render the cube
-		ourShader.setVec3("color", vec3(pw));
+		
+		
+		float c = (music.vocals_fft.normalizedCentroïd(animation.vocals.centroid)+1.f)*0.5f;
+
+		vec3 color;	
+		color.x = c;
+		color.y = 0.2f;
+		color.z = 1.f - c;
+		ourShader.setVec3("color", color);
+		rotation += animation.bass.rms;
 		glBindVertexArray(VAO[0]);
 		// glDrawElements(GL_TRIANGLES, 3 * obj.getdF().size(), GL_UNSIGNED_INT, 0);
         glDrawArrays(GL_TRIANGLES, 0, obj.getVertexs().size());
@@ -167,6 +175,7 @@ int main(void)
 		if (autoRot)
 			// ourShader.setRotY(ourShader.getRotY() + (ourShader.getRotationSpeed() * ourShader.getDeltaTime()));
 			ourShader.setRotY(ourShader.getRotY() + (radians(ourShader.getRotationSpeed() * rotation)));
+			// ourShader.setRotY(ourShader.getRotY() + deltaTime * animation.piano.pitch * 0.015f);
         // also draw the lamp object
         lightCubeShader.use();
 		lightCubeShader.setVec3("light", light.specular);

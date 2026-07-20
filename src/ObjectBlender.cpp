@@ -182,30 +182,6 @@ ObjectBlender::ObjectBlender(std::string textObj, std::string textMtl, int d)
 	this->tri();
 }
 
-ObjectBlender::ObjectBlender(const ObjectBlender& obj){
-	this->color = obj.color;
-	this->dfaces = obj.dfaces;
-	this->faces = obj.faces;
-	this->name = obj.name;
-	this->vertexs = obj.vertexs;
-	this->v = obj.v;
-	this->n = obj.n;
-	this->t = obj.t;
-	this->keys = obj.keys;
-	this->light = obj.light;
-}
-
-ObjectBlender&	ObjectBlender::operator=(const ObjectBlender& obj){
-	if (this == &obj)
-		return (*this);
-	this->~ObjectBlender();
-	*this = ObjectBlender (obj);
-	return (*this); 
-}
-
-ObjectBlender::~ObjectBlender()
-{}
-
 const std::vector<vec3>&	ObjectBlender::getV() const {
 	return (this->v);
 }

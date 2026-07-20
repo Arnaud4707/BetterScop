@@ -61,8 +61,10 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void processInput(GLFWwindow *window, float *delta, Shader* ourShader, Camera *camera)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+		system("pkill paplay");
 		glfwSetWindowShouldClose(window, true);
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
 		camera->ProcessKeyboard(FORWARD, *delta);
@@ -384,7 +386,7 @@ vec3 centerObj(ObjectBlender* obj)
 	return (c);
 }
 
-void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection, int width, int height, vec3 pos)
+void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection, int width, int height, vec3 pos, MusicState& anime)
 {
 	ourShader->use();
 	ourShader->setVec3("light.position", light.position);
@@ -424,7 +426,7 @@ void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection
 	*model = rotate(*model, ourShader->getRotX(), vec3(1.0f, 0.0f, 0.0f));
 	*model = translate(*model, -pos);
 	*model = translate(*model, vec3(0.0f));
-    *model = scale(*model, vec3(INIT_SCALE_OBJ));
+    *model = scale(*model, vec3(INIT_SCALE_OBJ) + (anime.bass.rms * 4.0f));
 
 	ourShader->setMat4("model", *model);
 

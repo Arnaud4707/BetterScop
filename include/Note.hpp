@@ -22,7 +22,7 @@ public:
 		end = nd;
 		velocity = velos;
 	};
-	~Note(){};
+	~Note() = default;
 
 	const int &getInstrument() const
 	{

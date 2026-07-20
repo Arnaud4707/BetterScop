@@ -51,9 +51,9 @@ private:
 public:
 	ObjectBlender(std::string fileObj, std::string fileMtl);
 	ObjectBlender(std::string fileObj, std::string fileMtl, int d);
-	ObjectBlender(const ObjectBlender &o);
-	ObjectBlender &operator=(const ObjectBlender &o);
-	~ObjectBlender();
+	ObjectBlender(const ObjectBlender &o) = default;
+	ObjectBlender &operator=(const ObjectBlender &o) = default;
+	~ObjectBlender() = default;
 
 	const std::vector<vec3> &getV() const;
 	const std::vector<face> &getF() const;
