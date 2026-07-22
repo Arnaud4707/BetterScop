@@ -6,44 +6,44 @@
 
 class Note
 {
-private:
-	int instrument;
-	int pitch;
-	float start;
-	float end;
-	float velocity;
+	private:
+		int instrument;
+		int pitch;
+		float start;
+		float end;
+		float velocity;
 
-public:
-	Note(){};
-	Note(int ist, int pt, float st, float nd, int velos){
-		instrument = ist;
-		pitch = pt;
-		start = st;
-		end = nd;
-		velocity = velos;
-	};
-	~Note() = default;
+	public:
+		Note(){};
+		Note(int ist, int pt, float st, float nd, int velos){
+			instrument = ist;
+			pitch = pt;
+			start = st;
+			end = nd;
+			velocity = velos;
+		};
+		~Note() = default;
 
-	const int &getInstrument() const
-	{
-		return (this->instrument);
-	};
-	const int &getPitch() const
-	{
-		return (this->pitch);
-	};
-	const float &getStart() const
-	{
-		return (this->start);
-	};
-	const float &getEnd() const
-	{
-		return (this->end);
-	};
-	const float &getVelocity() const
-	{
-		return (this->velocity);
-	};
+		const int &getInstrument() const
+		{
+			return (this->instrument);
+		};
+		const int &getPitch() const
+		{
+			return (this->pitch);
+		};
+		const float &getStart() const
+		{
+			return (this->start);
+		};
+		const float &getEnd() const
+		{
+			return (this->end);
+		};
+		const float &getVelocity() const
+		{
+			return (this->velocity);
+		};
 };
 
 #endif

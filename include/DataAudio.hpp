@@ -4,8 +4,8 @@
 	#include <iostream>
 	#include <string>
 
-	class DataAudio
-	{
+class DataAudio
+{
 	private:
 		float time;
 		float rms;
@@ -15,7 +15,6 @@
 		float bass;
 		float mid;
 		float high;
-
 	public:
 		DataAudio() {};
 		DataAudio(float dtime, float drms, float dcentroid, float drolloff, float dzcr, float dbass, float dmid, float dhight)
@@ -30,7 +29,6 @@
 			high = dhight;
 		};
 		~DataAudio() = default;
-
 		const float &getTime() const
 		{
 			return (this->time);
@@ -63,6 +61,6 @@
 		{
 			return (this->high);
 		};
-	};
+};
 
-	#endif
+#endif

@@ -6,10 +6,13 @@ LDFLAGS= -lGL -lglfw -ldl -fsanitize=address
 # LDFLAGS= -lGL -lglfw -ldl
 HEADER= include/header.hpp include/shader.hpp include/camera.hpp include/ObjectBlender.hpp \
 		include/fonction_math.hpp include/Vec2.hpp include/Vec3.hpp include/Vec4.hpp \
-		include/Mat2.hpp include/Mat3.hpp include/Mat4.hpp include/Note.hpp include/Midi.hpp \
-		include/DataAudio.hpp include/FFT.hpp include/MusicState.hpp include/MusicEngine.hpp
+		include/Mat2.hpp include/Mat3.hpp include/Mat4.hpp include/AudioStats.hpp include/Note.hpp \
+		include/Midi.hpp include/DataAudio.hpp include/FFT.hpp include/MusicState.hpp include/MusicEngine.hpp \
+		include/MusicAnalyzer.hpp  include/AnimationState.hpp include/AnimationEngine.hpp
+
 DIR_SRC = src/
-PATH_SRC= Shader.cpp ObjectBlender.cpp Midi.cpp FFT.cpp MusicEngine.cpp fonction.cpp init.cpp main.cpp
+PATH_SRC= 	Shader.cpp ObjectBlender.cpp Midi.cpp FFT.cpp MusicEngine.cpp MusicAnalyzer.cpp \
+			fonction.cpp init.cpp main.cpp
 SRC= $(addprefix $(DIR_SRC), $(PATH_SRC))
 DIR_OBJ= obj/
 OBJ= $(addprefix  $(DIR_OBJ), $(PATH_SRC:.cpp=.o))

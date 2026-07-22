@@ -6,55 +6,68 @@
 
 struct InstrumentState
 {
-	float	time;
-	bool 	active;
-	int		pitch;
-	int 	velocity;
-	float 	rms;
-	float 	centroid;
-	float 	rolloff;
-	float 	zcr;
-	float 	bass;
-	float 	mid;
-	float 	high;
-	bool 	noteOn;
-	bool 	noteOff;
+	// audio
+	float rms;
+	float rmsDelta;
+	float bass;
+	float mid;
+	float high;
+	float centroid;
+	float zcr;
 
-	InstrumentState(){
-		time = 0.f;
-		active = false;
-		pitch = 0;
-		velocity = 0;
+	// midi
+	bool active;
+	bool noteOn;
+	bool noteOff;
+	int pitch;
+	int velocity;
+
+	// animation
+	float attackThreshold;
+	float pulse;
+	float energy;
+	float brightness;
+	float movement;
+
+	InstrumentState()
+	{
 		rms = 0.f;
-		centroid = 0.f;
-		rolloff = 0.f;
-		zcr = 0.f;
+		rmsDelta = 0.f;
 		bass = 0.f;
 		mid = 0.f;
 		high = 0.f;
+		centroid = 0.f;
+
+		active = false;
 		noteOn = false;
 		noteOff = false;
+		pitch = 0;
+		velocity = 0;
+
+		pulse = 0.f;
+		attackThreshold = 0.f;
+		energy = 0.f;
+		brightness = 0.f;
+		movement = 0.f;
 	};
 
-	InstrumentState(const InstrumentState& obj) = default;
+	InstrumentState(const InstrumentState &obj) = default;
 
-	InstrumentState& operator=(const InstrumentState& obj) = default;
+	InstrumentState &operator=(const InstrumentState &obj) = default;
 
-	void dataAudio(const DataAudio& obj)
+	void dataAudio(const DataAudio &obj)
 	{
-		time = obj.getTime();
 		rms = obj.getRms();
 		centroid = obj.getCentroid();
-		rolloff = obj.getrolloff();
 		zcr = obj.getZcr();
 		bass = obj.getBass();
 		mid = obj.getMid();
 		high = obj.getHight();
+		energy = 0.6f * rms + 0.3f * bass + 0.1f * mid;
 	};
 
-	void noteActive(const Note& obj, float lastTime, float currentTime)
+	void noteActive(const Note &obj, float lastTime, float currentTime)
 	{
-		time = currentTime;
 		active = true;
 		pitch = obj.getPitch();
 		velocity = obj.getVelocity();
@@ -65,9 +78,8 @@ struct InstrumentState
 		}
 	};
 
-	void noteNoActive(const Note& obj, float lastTime, float currentTime)
+	void noteNoActive(const Note &obj, float lastTime, float currentTime)
 	{
-		time = currentTime;
 		active = false;
 		pitch = obj.getPitch();
 		velocity = obj.getVelocity();
@@ -88,61 +100,23 @@ struct MusicState
 	InstrumentState vocals;
 	InstrumentState other;
 
-	float globalRMS;
-	float globalBass;
-	float globalMid;
-	float globalHigh;
+	float globalEnergy;
+	float beat;
+	float brightness;
 
-	void fillGlobalRMS(){
-		globalRMS += drums.rms;
-		globalRMS += bass.rms;
-		globalRMS += guitar.rms;
-		globalRMS += piano.rms;
-		globalRMS += other.rms;
-		globalRMS += vocals.rms;
-		globalRMS /= 6;
-	};
-	
-	void fillGlobalBass(){
-		globalBass += drums.bass;
-		globalBass += bass.bass;
-		globalBass += guitar.bass;
-		globalBass += piano.bass;
-		globalBass += other.bass;
-		globalBass += vocals.bass;
-		globalBass /= 6;
-	};
-	
-	void fillGlobalMid(){
-		globalMid += drums.mid;
-		globalMid += bass.mid;
-		globalMid += guitar.mid;
-		globalMid += piano.mid;
-		globalMid += other.mid;
-		globalMid += vocals.mid;
-		globalMid /= 6;
-	};
-	
-	void fillGlobalHigh(){
-		globalHigh += drums.high;
-		globalHigh += bass.high;
-		globalHigh += guitar.high;
-		globalHigh += piano.high;
-		globalHigh += other.high;
-		globalHigh += vocals.high;
-		globalHigh /= 6;
-	};
+	bool kick;
+	bool snare;
+	bool hihat;
 
-	void global(){
-		globalRMS = 0.f;
-		globalBass = 0.f;
-		globalMid = 0.f;
-		globalHigh = 0.f;	
-		fillGlobalBass();
-		fillGlobalMid();
-		fillGlobalHigh();
-		fillGlobalRMS();
-	}
-	
+	void fillGlobalEnergy()
+	{
+		globalEnergy += drums.energy;
+		globalEnergy += bass.energy;
+		globalEnergy += guitar.energy;
+		globalEnergy += piano.energy;
+		globalEnergy += other.energy;
+		globalEnergy += vocals.energy;
+		globalEnergy /= 6;
+	};
 };
 #endif

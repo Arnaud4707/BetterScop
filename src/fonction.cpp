@@ -1,5 +1,4 @@
 #include "../include/header.hpp"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
 
@@ -386,8 +385,9 @@ vec3 centerObj(ObjectBlender* obj)
 	return (c);
 }
 
-void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection, int width, int height, vec3 pos, MusicState& anime)
+void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection, int width, int height, vec3 pos, AnimationState& anime)
 {
+	(void)anime;
 	ourShader->use();
 	ourShader->setVec3("light.position", light.position);
 	ourShader->setFloat("factor", factor);
@@ -413,7 +413,11 @@ void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection
 	ourShader->setVec3("light.diffuse",  light.diffuse); // darken diffuse light a bit
 	ourShader->setVec3("light.specular", light.specular); 
 	// view/projection transformations
-	*projection = perspective(radians(cam.Zoom), (float)(width * 0.8) / (float)(height * 0.8), 0.1f, 100.0f);
+	*projection = perspective(radians(cam.Zoom * anime.cameraZoom),(float)(width * 0.8) / (float)(height * 0.8), 0.1f, 100.f);
+	// *projection = perspective(radians(cam.Zoom), (float)(width * 0.8) / (float)(height * 0.8), 0.1f, 100.0f);
+	float s = anime.cameraShake;
+	cam.Position.x += random(-1,1) * s * 0.03f;
+	cam.Position.y += random(-1,1) * s * 0.03f;
 	*view = cam.GetViewMatrix();
 	ourShader->setMat4("projection", *projection);
 	ourShader->setMat4("view", *view);
@@ -426,7 +430,7 @@ void	objectAndLight(Shader* ourShader, mat4* model, mat4* view, mat4* projection
 	*model = rotate(*model, ourShader->getRotX(), vec3(1.0f, 0.0f, 0.0f));
 	*model = translate(*model, -pos);
 	*model = translate(*model, vec3(0.0f));
-    *model = scale(*model, vec3(INIT_SCALE_OBJ) + (anime.bass.rms * 4.0f));
+    *model = scale(*model, anime.objectScale);
 
 	ourShader->setMat4("model", *model);
 

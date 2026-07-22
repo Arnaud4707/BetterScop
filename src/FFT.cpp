@@ -54,8 +54,8 @@ FFT::FFT(std::string text)
 	std::ifstream file(text);
 	std::string line;
 
-	minRms = minCentroid = minBass = minMid = minHigh = std::numeric_limits<float>::max();
-	maxRms = maxCentroid = maxBass = maxMid = maxHigh = std::numeric_limits<float>::lowest();
+	stats.minRms = stats.minCentroid = stats.minBass = stats.minMid = stats.minHigh = std::numeric_limits<float>::max();
+	stats.maxRms = stats.maxCentroid = stats.maxBass = stats.maxMid = stats.maxHigh = std::numeric_limits<float>::lowest();
 
 	std::getline(file, line);
 	while (std::getline(file, line))
@@ -64,16 +64,16 @@ FFT::FFT(std::string text)
 		try
 		{
 			parseFaceToken(line, time, rms, centroid, rolloff, zcr, bass, mid, high);
-			minRms = std::min(minRms, rms);
-			maxRms = std::max(maxRms, rms);
-			minCentroid = std::min(minCentroid, centroid);
-			maxCentroid = std::max(maxCentroid, centroid);
-			minBass = std::min(minBass, bass);
-			maxBass = std::max(maxBass, bass);
-			minMid = std::min(minMid, mid);
-			maxMid = std::max(maxMid, mid);
-			minHigh = std::min(minHigh, high);
-			maxHigh = std::max(maxHigh, high);
+			stats.minRms = std::min(stats.minRms, rms);
+			stats.maxRms = std::max(stats.maxRms, rms);
+			stats.minCentroid = std::min(stats.minCentroid, centroid);
+			stats.maxCentroid = std::max(stats.maxCentroid, centroid);
+			stats.minBass = std::min(stats.minBass, bass);
+			stats.maxBass = std::max(stats.maxBass, bass);
+			stats.minMid = std::min(stats.minMid, mid);
+			stats.maxMid = std::max(stats.maxMid, mid);
+			stats.minHigh = std::min(stats.minHigh, high);
+			stats.maxHigh = std::max(stats.maxHigh, high);
 
 			DataAudio dfft(time, rms, centroid, rolloff, zcr, bass, mid, high);
 			fft.push_back(dfft);

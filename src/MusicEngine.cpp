@@ -31,7 +31,7 @@ MusicState MusicEngine::update(float time)
 	result.other = fillInstrument(&other_fft, &other_midi, lastTime, time);
 	result.vocals = fillInstrument(&vocals_fft, &vocals_midi, lastTime, time);
 	
-	result.global();
+	result.fillGlobalEnergy();
 	lastTime = time;
 	return(result);
 }

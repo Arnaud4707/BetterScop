@@ -48,7 +48,7 @@ int main(void)
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	GLFWwindow *window = glfwCreateWindow(mode->width * 0.8, mode->height * 0.8, "LearnOpenGL", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(mode->width * 0.8, mode->height * 0.8, "Audio Animation", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -85,7 +85,7 @@ int main(void)
 	ObjectBlender obj("42.obj", "42.mtl");
 	std::string pathFFT = "csv/meek_Mill_Rico_ftdrake/csv_from_fft/";
 	std::string pathMidi = "csv/meek_Mill_Rico_ftdrake/csv_from_midi/";
-	MusicEngine music(pathFFT + "bass_fft.csv", pathFFT + "drums_fft.csv", pathFFT + "guitar_fft.csv", pathFFT + "piano_fft.csv", pathFFT + "other_fft.csv", pathFFT + "vocals_fft.csv"
+	MusicEngine engine(pathFFT + "bass_fft.csv", pathFFT + "drums_fft.csv", pathFFT + "guitar_fft.csv", pathFFT + "piano_fft.csv", pathFFT + "other_fft.csv", pathFFT + "vocals_fft.csv"
 				, pathMidi + "bass.csv", pathMidi + "drums.csv", pathMidi + "guitar.csv", pathMidi + "piano.csv", pathMidi + "other.csv", pathMidi + "vocals.csv");
 	texture1 = loadTexture((char const *)("texture/container.jpg"));
 	// texture2 = loadTexture((char const *)("texture/basketball.png"));
@@ -136,7 +136,10 @@ int main(void)
 		exit(0);
 	}
 	std::cout << "ici" << std::endl;
-	
+	std::array<const AudioStats*, 6> cpAudioStats = {&engine.bass_fft.stats, &engine.drums_fft.stats, &engine.guitar_fft.stats
+		, &engine.piano_fft.stats, &engine.other_fft.stats, &engine.vocals_fft.stats};
+	MusicAnalyzer anayser(cpAudioStats);
+	AnimationEngine engineAnime;
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -148,34 +151,37 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		float rotation = 0.0f;
+		// float rotation = 0.0f;
 
-		MusicState animation = music.update(currentFrame);
-		
+		MusicState track = engine.update(currentFrame);
+		anayser.update(track.bass, BASS);
+		anayser.update(track.drums, DRUMS);
+		anayser.update(track.guitar, GUITAR);
+		anayser.update(track.piano, PIANO);
+		anayser.update(track.other, OTHER);
+		anayser.update(track.vocals, VOCALS);
+		anayser.updateGlobal(track);
+		AnimationState state = engineAnime.update(track, deltaTime);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		// glActiveTexture(GL_TEXTURE1);
 		// glBindTexture(GL_TEXTURE_2D, texture2);
-		objectAndLight(&ourShader, &model, &view, &projection, mode->width, mode->height, vec3(c.x, c.y, c.z), animation);
+		objectAndLight(&ourShader, &model, &view, &projection, mode->width, mode->height, vec3(c.x, c.y, c.z), state);
 		// render the cube
 		
-		
-		float c = (music.vocals_fft.normalizedCentroïd(animation.vocals.centroid)+1.f)*0.5f;
-
-		vec3 color;	
-		color.x = c;
-		color.y = 0.2f;
-		color.z = 1.f - c;
-		ourShader.setVec3("color", color);
-		rotation += animation.bass.rms;
+		ourShader.setVec3("color", state.color);
+		ourShader.setFloat("glow", state.glow);
 		glBindVertexArray(VAO[0]);
 		// glDrawElements(GL_TRIANGLES, 3 * obj.getdF().size(), GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0, obj.getVertexs().size());
+		glDrawArrays(GL_TRIANGLES, 0, obj.getVertexs().size());
 
-		if (autoRot)
+		if (autoRot){
 			// ourShader.setRotY(ourShader.getRotY() + (ourShader.getRotationSpeed() * ourShader.getDeltaTime()));
-			ourShader.setRotY(ourShader.getRotY() + (radians(ourShader.getRotationSpeed() * rotation)));
+			// ourShader.setRotY(ourShader.getRotY() + (radians(ourShader.getRotationSpeed() * rotation)));
 			// ourShader.setRotY(ourShader.getRotY() + deltaTime * animation.piano.pitch * 0.015f);
+			ourShader.setRotX(ourShader.getRotX() + deltaTime * track.piano.pitch * 0.0015);
+			ourShader.setRotY(ourShader.getRotY() + state.rotationSpeed * 0.15);
+		}
         // also draw the lamp object
         lightCubeShader.use();
 		lightCubeShader.setVec3("light", light.specular);

@@ -7,6 +7,9 @@
 #include "shader.hpp"
 #include "ObjectBlender.hpp"
 #include "MusicEngine.hpp"
+#include "MusicAnalyzer.hpp"
+#include "AnimationEngine.hpp"
+#include <random>
 
 extern float vertices[];
 extern unsigned int indices[];
@@ -64,7 +67,7 @@ void 			vertexf(GLFWwindow *window, ObjectBlender *obj, unsigned int *VBO, unsig
 void 			vertexdf(GLFWwindow *window, ObjectBlender *obj, unsigned int *VBO, unsigned int *VAO, unsigned int *lightVAO, int size);
 void 			transform4(Shader *ourShader);
 void 			scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void 			objectAndLight(Shader *ourShader, mat4 *model, mat4 *view, mat4 *projection, int width, int height, vec3 pos, MusicState& anime);
+void 			objectAndLight(Shader *ourShader, mat4 *model, mat4 *view, mat4 *projection, int width, int height, vec3 pos, AnimationState& anime);
 void 			materialAndLight(Shader *ourShader, mat4 *model, mat4 *view, mat4 *projection, int width, int height, Material mat, vec3 pos);
 void 			initMaterials(void);
 unsigned int 	loadTexture(char const *path);
@@ -72,4 +75,10 @@ void 			vertexSansNT(GLFWwindow *window, ObjectBlender *obj, unsigned int *VBO, 
 void 			print_vertex(ObjectBlender *obj);
 vec3 			centerObj(ObjectBlender *obj);
 
+inline float random(float min, float max)
+{
+    static std::mt19937 gen(std::random_device{}());
+    std::uniform_real_distribution<float> dist(min, max);
+    return dist(gen);
+};
 #endif
