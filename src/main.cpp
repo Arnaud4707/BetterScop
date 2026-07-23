@@ -33,6 +33,7 @@ Material	red_rubber;
 Material	white_rubber;
 Material	yellow_rubber;
 Light		light;
+
 int main(void)
 {
 	glfwInit();

@@ -23,7 +23,11 @@ public:
 	float	rotationSpeed = 2.0f;
 	float	deltaTime = 0.005f;
 	// constructor reads and builds the shader
+	Shader(){};
 	Shader(const char *vertexPath, const char *fragmentPath, float rotx = INIT_ROTX_OBJ, float roty = INIT_ROTY_OBJ, bool rot = false);
+	Shader(const Shader& obj) = default;
+	Shader& operator=(const Shader& obj) = default;
+	~Shader() = default;
 	// use/activate the shader
 	void use();
 	// utility uniform functions

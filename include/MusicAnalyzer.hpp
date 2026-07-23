@@ -29,6 +29,7 @@ class MusicAnalyzer
 		std::array<AnalyzerState, 6> history;
 
 	public:
+		MusicAnalyzer(){};
 		MusicAnalyzer(std::array<const AudioStats*, 6> obj) : stats(obj) {};
 		void update(InstrumentState &state, int index);
 

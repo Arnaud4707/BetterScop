@@ -49,6 +49,7 @@ private:
 	lightning light;
 
 public:
+	ObjectBlender(){};
 	ObjectBlender(std::string fileObj, std::string fileMtl);
 	ObjectBlender(std::string fileObj, std::string fileMtl, int d);
 	ObjectBlender(const ObjectBlender &o) = default;
