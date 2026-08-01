@@ -3,30 +3,31 @@
 void	WindowManager::initShader()
 {
 	Shader ourShader("shader/shaderObjectSansNetT.vs", "shader/shaderObjectSansNetT.fs");
-	shaderObject = ourShader;
+	app.shaderObject = ourShader;
 	Shader lightCubeShader("shader/shaderLightCube.vs", "shader/shaderLightCube.fs");
-	shaderLight = lightCubeShader;
+	app.shaderLight = lightCubeShader;
 
-	shaderObject.setDeltaTime(0.005);
-	shaderObject.setRotationSpeed(2.0);
+	app.shaderObject.setDeltaTime(0.005);
+	app.shaderObject.setRotationSpeed(2.0);
 }
 
 void	WindowManager::initObjetBlender()
 {
 	ObjectBlender obj("42.obj", "42.mtl");
-	object = obj;
-	vec3 c = centerObj(&object);
-			shaderObject.setVec3("color", vec3(1.0f));
+	app.object = obj;
+	app.render.centerObject = centerObj(&app.object);
+			app.shaderObject.setVec3("color", vec3(1.0f));
 			// vertexdf(window, &obj, VBO, VAO, lightVAO, 2);
-			vertexSansNT(window3D, &obj, render.VBO, render.VAO, render.lightVAO, 2);
+			vertexSansNT(window, &app.object, app.render.VBO, app.render.VAO, app.render.lightVAO, 2);
 }
 
 void	WindowManager::init3D()
 {
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_SCISSOR_TEST);
 	// glDisable(GL_CULL_FACE);
 
-	render.model = mat4(1.0f);
+	app.render.model = mat4(1.0f);
 	cam.ProcessMouseMovement(-74.033f, -104.846f, true);
 	initMaterials();
 
@@ -37,20 +38,20 @@ void	WindowManager::init3D()
 	// light.ambient = vec3 (0.15f, 0.15f, 0.15f);
 	// light.diffuse = vec3 (0.8f, 0.8f, 0.8f);
 	// light.specular = vec3 (0.35f, 0.35f, 0.35f);
-	for (auto &m : object.getKey())
+	for (auto &m : app.object.getKey())
 	{
 		std::string ambient = "material[" + std::to_string(m.second) + "].ambient";
 		std::string diffuse = "material[" + std::to_string(m.second) + "].diffuse";
 		std::string specular = "material[" + std::to_string(m.second) + "].specular";
 		std::string shininess = "material[" + std::to_string(m.second) + "].shininess";
-		const std::map<int, lightning> &material = object.getMaterials();
-		shaderObject.use();
-		shaderObject.setVec3(ambient, material.at(m.second).ambient);
-		shaderObject.setVec3(diffuse, material.at(m.second).diffuse);
-		shaderObject.setVec3(specular, material.at(m.second).specular);
-		shaderObject.setFloat(shininess, material.at(m.second).shininess);
+		const std::map<int, lightning> &material = app.object.getMaterials();
+		app.shaderObject.use();
+		app.shaderObject.setVec3(ambient, material.at(m.second).ambient);
+		app.shaderObject.setVec3(diffuse, material.at(m.second).diffuse);
+		app.shaderObject.setVec3(specular, material.at(m.second).specular);
+		app.shaderObject.setFloat(shininess, material.at(m.second).shininess);
 	}
-	shaderObject.use();
+	app.shaderObject.use();
 	// for none mat0
 	// ourShader.setVec3("material.ambient", mat.ambient);
 	// ourShader.setVec3("material.diffuse", mat.diffuse);
@@ -58,7 +59,7 @@ void	WindowManager::init3D()
 	// ourShader.setFloat("material.shininess", mat.shininess);
 }
 
-void WindowManager::initAudio()
+void WindowManager::startAudio()
 {
 	int ch = fork();
 	if (ch == 0)
@@ -77,6 +78,7 @@ void	WindowManager::initMusicEngine()
 	musicEngine = engine;
 }
 
+//after initMusicEngine()
 void	WindowManager::initMusicAnayzer()
 {
 	std::array<const AudioStats *, 6> cpAudioStats = {&musicEngine.bass_fft.stats, &musicEngine.drums_fft.stats, &musicEngine.guitar_fft.stats, &musicEngine.piano_fft.stats, &musicEngine.other_fft.stats, &musicEngine.vocals_fft.stats};
@@ -84,13 +86,17 @@ void	WindowManager::initMusicAnayzer()
 	analyzer = analyser;
 }
 
-void	WindowManager::initwindow(GLFWwindow* window, const GLFWvidmode *mode)
+GLFWwindow*	WindowManager::initwindow(const GLFWvidmode *mode, std::string name)
 {
-	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	window = glfwCreateWindow(mode->width * 0.8, mode->height * 0.8, "Audio Animation", NULL, NULL);
+	GLFWwindow* window = NULL;
+	height = mode->height * percentWin;
+	width = mode->width * percentWin;
+	app.height = height;
+	app.width = width / 2;
+	// app.width = width;
+	visualizer.height = app.height;
+	visualizer.width = app.width;
+	window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -98,35 +104,119 @@ void	WindowManager::initwindow(GLFWwindow* window, const GLFWvidmode *mode)
 		exit(-1);
 	}
 	glfwMakeContextCurrent(window);
+	
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		exit(-1);
 	}
-	glViewport(0, 0, mode->width * 0.8f, mode->height * 0.8f);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	return (window);
 }
-
+//apter initShader()
 void	WindowManager::initTexture()
 {
 	// unsigned int texture2;
-	render.texture1 = loadTexture((char const *)("texture/container.jpg"));
+	app.render.texture1 = loadTexture((char const *)("texture/container.jpg"));
 	// texture2 = loadTexture((char const *)("texture/basketball.png"));
-	shaderObject.use();
-	shaderObject.setInt("t.specular", 0);
+	app.shaderObject.use();
+	app.shaderObject.setInt("t.specular", 0);
 }
 
 //after initShader()
-void WindowManager::mouseEvent()
+void WindowManager::setPointerWindow(GLFWwindow* window)
 {
-	glfwSetWindowUserPointer(window3D, &shaderObject);
-	glfwSetCursorPosCallback(window3D, Shader::mouse_callback_wrapper);	
+	glfwSetWindowUserPointer(window, &app.shaderObject);
+	glfwSetCursorPosCallback(window, Shader::mouse_callback_wrapper);	
 }
 
-void	WindowManager::updateMusicEngine()
+void	WindowManager::updateMusicEngine(float currentFrame)
 {
+	track = musicEngine.update(currentFrame);
+}
 
+void	WindowManager::updateMusicAnalyzer()
+{
+	analyzer.update(track.bass, BASS);
+	analyzer.update(track.drums, DRUMS);
+	analyzer.update(track.guitar, GUITAR);
+	analyzer.update(track.piano, PIANO);
+	analyzer.update(track.other, OTHER);
+	analyzer.update(track.vocals, VOCALS);
+	analyzer.updateGlobal(track);
+}
+
+void WindowManager::updateAnimationEngine(float deltaTime)
+{
+	state = animationEngine.update(track, deltaTime);
+}
+
+void WindowManager::updateRender()
+{
+	// glViewport(0, 0, app.width, app.height);
+	glViewport(0, 0, width / 2, height);
+	glScissor(0, 0, width / 2, height);
+	processInputAnimation(window, &deltaTime, &app.shaderObject, &cam);
+	// processInput(window, &deltaTime, &goldShaderpaplay audio/meek_Mill_Rico_ftdrake.mp3, &cam);
+
+	glClearColor(app.color.x, app.color.y, app.color.z, app.color.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, app.render.texture1);
+	// glActiveTexture(GL_TEXTURE1);
+	// glBindTexture(GL_TEXTURE_2D, texture2);
+	objectAndLight(app, app.width, app.height, state);
+	// render the cube
+		
+	app.shaderObject.setVec3("color", state.color);
+	app.shaderObject.setFloat("glow", state.glow);
+	glBindVertexArray(app.render.VAO[0]);
+	// glDrawElements(GL_TRIANGLES, 3 * obj.getdF().size(), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, app.object.getVertexs().size());
+
+	if (autoRot){
+		// ourShader.setRotY(ourShader.getRotY() + (ourShader.getRotationSpeed() * ourShader.getDeltaTime()));
+		// ourShader.setRotY(ourShader.getRotY() + (radians(ourShader.getRotationSpeed() * rotation)));
+		// ourShader.setRotY(ourShader.getRotY() + deltaTime * animation.piano.pitch * 0.015f);
+		app.shaderObject.setRotX(app.shaderObject.getRotX() + deltaTime * track.piano.pitch * 0.0015);
+		app.shaderObject.setRotY(app.shaderObject.getRotY() + state.rotationSpeed * 0.15);
+	}
+    // also draw the lamp object
+    app.shaderLight.use();
+	app.shaderLight.setVec3("light", light.specular);
+    app.shaderLight.setMat4("projection", app.render.projection);
+    app.shaderLight.setMat4("view", app.render.view);
+    app.render.model = mat4(1.0f);
+    app.render.model = translate(app.render.model, light.position);
+    app.render.model = scale(app.render.model, vec3(0.2f)); // a smaller cube
+    app.shaderLight.setMat4("model", app.render.model);
+
+    glBindVertexArray(app.render.lightVAO[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+}
+
+void WindowManager::destroyWindow()
+{
+	glDeleteVertexArrays(1, app.render.VAO);
+	glDeleteBuffers(1, app.render.VBO);
+	glDeleteProgram(app.shaderObject.ID);
+	// glDeleteProgram(goldShader.ID);
+	glfwTerminate();
+}
+
+void WindowManager::updateVisualizer(){
+	glViewport(width / 2, 0, width / 2, height);
+	glScissor(width / 2, 0, width / 2, height);
+
+	processInputVisualizer(window, &deltaTime, &visualizer.shaderObject, &cam);
+	glClearColor(visualizer.color.x, visualizer.color.y, visualizer.color.z, visualizer.color.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	StatsHistory history;
+
+	history.push(track);
+	NormalizePeak np;
+
+	std::cout << np.normalizeGlobalEnergie(track.globalEnergy) << std::endl;
 }

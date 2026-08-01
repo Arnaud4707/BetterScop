@@ -6,8 +6,7 @@
 #include "MusicEngine.hpp"
 #include "MusicAnalyzer.hpp"
 #include "AnimationEngine.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../include/stb_image.h"
+#include <random>
 
 extern Light light;
 
@@ -15,8 +14,11 @@ extern float vertices[216];
 extern unsigned int indices[];
 extern bool autoRot;
 extern bool wareFrame;
-extern	float factor;
-extern	bool onTexture;
+extern float factor;
+extern bool onTexture;
+extern Camera		cam;
+extern float		deltaTime;	// Time between current frame and last frame
+extern float		lastFrame;
 
 extern Material emerald;
 extern Material jade;
@@ -43,4 +45,10 @@ extern Material red_rubber;
 extern Material white_rubber;
 extern Material yellow_rubber;
 
+inline float random(float min, float max)
+{
+	static std::mt19937 gen(std::random_device{}());
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(gen);
+};
 #endif

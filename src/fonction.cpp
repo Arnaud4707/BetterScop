@@ -312,7 +312,6 @@ void vertexdf(GLFWwindow *window, ObjectBlender* obj, unsigned int *VBO, unsigne
 	glEnableVertexAttribArray(0);
 }
 
-
 void vertexSansNT(GLFWwindow *window, ObjectBlender* obj, unsigned int *VBO, unsigned int *VAO, unsigned int *lightVAO, int size)
 {
 	std::vector<float> tabVertex;
