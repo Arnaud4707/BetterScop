@@ -114,4 +114,14 @@ static inline float radians(float degrees)
 {
 	return ((M_PI * degrees)/ 180);
 }
+
+template<typename T>
+T clamp(T value, T minValue, T maxValue)
+{
+    if (value < minValue)
+        return minValue;
+    if (value > maxValue)
+        return maxValue;
+    return value;
+}
 #endif

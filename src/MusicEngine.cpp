@@ -1,4 +1,4 @@
-#include "../include/MusicEngine.hpp"
+#include "../include/musicEngine/MusicEngine.hpp"
 
 MusicEngine::MusicEngine(std::string fbass, std::string fdrums, std::string fguitar, std::string fpiano, std::string fother, std::string fvocals,
 						 std::string mbass, std::string mdrums, std::string mguitar, std::string mpiano, std::string mother, std::string mvocals)
@@ -30,8 +30,7 @@ MusicState MusicEngine::update(float time)
 	result.piano = fillInstrument(&piano_fft, &piano_midi, lastTime, time);
 	result.other = fillInstrument(&other_fft, &other_midi, lastTime, time);
 	result.vocals = fillInstrument(&vocals_fft, &vocals_midi, lastTime, time);
-	
-	result.fillGlobalEnergy();
+
 	lastTime = time;
 	return(result);
 }

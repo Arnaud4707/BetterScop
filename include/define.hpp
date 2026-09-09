@@ -64,4 +64,10 @@
 #  define SPEED_SWITCH_COLOR_TEXTURE 0.1
 # endif
 
+// define bonus
+
+#ifndef BONUS
+# define BONUS 0
+#endif
+
 #endif

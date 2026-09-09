@@ -1,7 +1,7 @@
 #ifndef MAT4_HPP
 #define MAT4_HPP
 
-#include "Vec4.hpp"
+#include "../vec/Vec4.hpp"
 
 struct mat4
 {

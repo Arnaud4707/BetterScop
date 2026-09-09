@@ -8,8 +8,8 @@
 #include <cmath>
 #include <sstream>
 #include <bits/stdc++.h>
-#include "structure.hpp"
-#include "fonction_math.hpp"
+#include "../structure.hpp"
+#include "../fonction_math.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -49,6 +49,7 @@ private:
 	lightning light;
 
 public:
+	ObjectBlender(){};
 	ObjectBlender(std::string fileObj, std::string fileMtl);
 	ObjectBlender(std::string fileObj, std::string fileMtl, int d);
 	ObjectBlender(const ObjectBlender &o) = default;

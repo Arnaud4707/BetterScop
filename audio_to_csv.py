@@ -63,9 +63,13 @@ for frame in range(nb_frames):
 
     time = times[frame]
 
-    bass = np.mean(S[bass_idx, frame])
-    mid = np.mean(S[mid_idx, frame])
-    high = np.mean(S[high_idx, frame])
+    bass = np.sqrt(np.mean(S[bass_idx, frame] ** 2))
+    mid = np.sqrt(np.mean(S[mid_idx, frame] ** 2))
+    high = np.sqrt(np.mean(S[high_idx, frame] ** 2))
+
+    bass = np.log1p(bass)
+    mid  = np.log1p(mid)
+    high = np.log1p(high)
 
     rows.append([
         time,

@@ -1,8 +1,8 @@
 #ifndef MUSICENGINE_HPP
 #define MUSICENGINE_HPP
 
-#include "FFT.hpp"
-#include "Midi.hpp"
+#include "../fft/FFT.hpp"
+#include "../midi/Midi.hpp"
 #include "MusicState.hpp"
 
 class MusicEngine
@@ -25,6 +25,7 @@ class MusicEngine
 		Midi	other_midi;
 		Midi	vocals_midi;
 
+		MusicEngine(){};
 		MusicEngine(std::string fbass, std::string fdrums, std::string fguitar, std::string fpiano, std::string fother, std::string fvocals,
 					std::string mbass, std::string mdrums, std::string mguitar, std::string mpiano, std::string mother, std::string mvocals);
 		MusicEngine(const MusicEngine& obj) = default;

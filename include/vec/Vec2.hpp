@@ -2,6 +2,8 @@
 #define VEC2_HPP
 
 #include <cmath>
+#include <ostream>
+#include <iostream>
 
 struct vec2
 {
@@ -173,6 +175,11 @@ static inline vec2 operator-(const vec2& obj)
 	tmp.x = 0 - obj.x;
 	tmp.y = 0 - obj.y;
 	return (tmp);
+}
+
+inline std::ostream& operator<<(std::ostream& os, const vec2& obj){
+	os << "x: " << obj.x << " y: " << std::endl;
+	return (os);
 }
 
 #endif

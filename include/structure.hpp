@@ -2,12 +2,12 @@
 #define STRUCTURE_HPP
 
 #include "define.hpp"
-#include "Vec2.hpp"
-#include "Vec3.hpp"
-#include "Vec4.hpp"
-#include "Mat2.hpp"
-#include "Mat3.hpp"
-#include "Mat4.hpp"
+#include "vec/Vec2.hpp"
+#include "vec/Vec3.hpp"
+#include "vec/Vec4.hpp"
+#include "mat/Mat2.hpp"
+#include "mat/Mat3.hpp"
+#include "mat/Mat4.hpp"
 
 struct face
 {
@@ -22,6 +22,29 @@ struct dface
 	face	normal;
 	face	texture;
 	int	idMaterial;
+};
+
+struct Material
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+};
+
+struct Light
+{
+	vec3 position;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+struct Jauge
+{
+	vec3 position;
+	vec3 color;
 };
 
 #endif

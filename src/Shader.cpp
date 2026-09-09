@@ -1,4 +1,4 @@
-#include "../include/shader.hpp"
+#include "../include/3D/shader.hpp"
 
 bool firstMouseObj = true;
 float lastXObj = 800.0f / 2.0;

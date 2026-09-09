@@ -18,23 +18,6 @@ extern bool wareFrame;
 extern	float factor;
 extern	bool onTexture;
 
-struct Material
-{
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
-	float shininess;
-};
-
-struct Light
-{
-	vec3 position;
-
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
-};
-
 extern Material emerald;
 extern Material jade;
 extern Material obsidian;
@@ -60,7 +43,6 @@ extern Material red_rubber;
 extern Material white_rubber;
 extern Material yellow_rubber;
 extern Light light;
-
 void 			framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void 			processInput(GLFWwindow *window, float *delta, Shader *ourShader, Camera *camera);
 void 			vertexf(GLFWwindow *window, ObjectBlender *obj, unsigned int *VBO, unsigned int *VAO, unsigned int *lightVAO, int size);

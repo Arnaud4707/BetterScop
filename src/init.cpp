@@ -1,4 +1,4 @@
-#include "../include/header.hpp"
+#include "../include/WindowManager.hpp"
 
 void    initMaterials(void)
 {
