@@ -1,8 +1,8 @@
 #ifndef MUSICENGINE_HPP
 #define MUSICENGINE_HPP
 
-#include "FFT.hpp"
-#include "Midi.hpp"
+#include "../fft/FFT.hpp"
+#include "../midi/Midi.hpp"
 #include "MusicState.hpp"
 
 class MusicEngine

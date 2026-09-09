@@ -34,6 +34,21 @@ void vertexSansNT(GLFWwindow *window, ObjectBlender* obj, unsigned int *VBO, uns
 	glEnableVertexAttribArray(0);
 }
 
+void recVisualizer(GLFWwindow *window, unsigned int *VBO, unsigned int *VAO, int size)
+{
+	(void)window;
+	glGenBuffers(size, VBO);
+
+	glGenVertexArrays(1, VAO);
+
+	glBindVertexArray(VAO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
+	// set the vertex attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+}
+
 vec3 centerObj(ObjectBlender* obj)
 {
 	vec3 center(0.0f);
@@ -166,18 +181,18 @@ void processInputAnimation(GLFWwindow *window, float *delta, Shader* ourShader, 
 	oPressedLastFrame = oPressedNow;
 	lPressedLastFrame = lPressedNow;
 	tPressedLastFrame = tPressedNow;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		light.position.y += 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		light.position.y -= 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		light.position.x += 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		light.position.x -= 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		light.position.z += 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		light.position.z -= 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	// 	light.position.y += 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	// 	light.position.y -= 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	// 	light.position.x += 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	// 	light.position.x -= 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	// 	light.position.z += 0.05f;
+	// if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	// 	light.position.z -= 0.05f;
 };
 
 void	processInputVisualizer(GLFWwindow *window, float *delta, Shader* ourShader, Camera *camera)
@@ -187,6 +202,36 @@ void	processInputVisualizer(GLFWwindow *window, float *delta, Shader* ourShader,
     (void)camera;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		EGlobal.position.y += 0.05f;
+		std::cout << EGlobal.position;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+		EGlobal.position.y -= 0.05f;
+		std::cout << EGlobal.position;
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+		EGlobal.position.x += 0.05f;
+		std::cout << EGlobal.position;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		EGlobal.position.x -= 0.05f;
+		std::cout << EGlobal.position;
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		EGlobal.position.z += 0.05f;
+		std::cout << EGlobal.position;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		EGlobal.position.z -= 0.05f;
+		std::cout << EGlobal.position;
+	}
+
 }
 
 unsigned int loadTexture(char const *path)

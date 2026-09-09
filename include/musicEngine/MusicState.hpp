@@ -2,7 +2,7 @@
 #define MUSICSTATE_HPP
 
 #include <iostream>
-#include "../include/DataAudio.hpp"
+#include "../fft/DataAudio.hpp"
 
 struct InstrumentState
 {
@@ -63,7 +63,6 @@ struct InstrumentState
 		bass = obj.getBass();
 		mid = obj.getMid();
 		high = obj.getHight();
-		energy = 0.6f * rms + 0.3f * bass + 0.1f * mid;
 	};
 
 	void noteActive(const Note &obj, float lastTime, float currentTime)
@@ -100,23 +99,23 @@ struct MusicState
 	InstrumentState vocals;
 	InstrumentState other;
 
-	float globalEnergy;
-	float beat;
-	float brightness;
+	struct {
+		float energy = 0;
+		float beat = 0;
+		float brightness = 0;
+    	float movement = 0;
+		float intensity = 0;
+    	float low = 0;
+    	float mid = 0;
+    	float high = 0;
+	} global ;
 
 	bool kick;
 	bool snare;
 	bool hihat;
+	float kickPulse = 0.f;
+	float snarePulse = 0.f;
+	float hihatPulse = 0.f;
 
-	void fillGlobalEnergy()
-	{
-		globalEnergy += drums.energy;
-		globalEnergy += bass.energy;
-		globalEnergy += guitar.energy;
-		globalEnergy += piano.energy;
-		globalEnergy += other.energy;
-		globalEnergy += vocals.energy;
-		globalEnergy /= 6;
-	};
 };
 #endif

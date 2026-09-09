@@ -2,7 +2,7 @@
 #define STATSHISTORY_HPP
 
 #include "History.hpp"
-#include "MusicState.hpp"
+#include "../musicEngine/MusicState.hpp"
 
 struct StatsHistory
 {
@@ -22,7 +22,7 @@ struct StatsHistory
 		piano.push(stats.piano.rms, stats.piano.energy, stats.piano.bass, stats.piano.mid, stats.piano.high);
 		other.push(stats.other.rms, stats.other.energy, stats.other.bass, stats.other.mid, stats.other.high);
 		vocals.push(stats.vocals.rms, stats.vocals.energy, stats.vocals.bass, stats.vocals.mid, stats.vocals.high);
-		globalEnergy.push_back(stats.globalEnergy);
+		globalEnergy.push_back(stats.global.energy);
 		return (*this);
 	};
 };

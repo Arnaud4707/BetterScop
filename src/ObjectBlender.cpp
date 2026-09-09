@@ -1,4 +1,4 @@
-#include "../include/ObjectBlender.hpp"
+#include "../include/3D/ObjectBlender.hpp"
 
 ObjectBlender::ObjectBlender(std::string textObj, std::string textMtl)
 {

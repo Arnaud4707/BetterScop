@@ -1,16 +1,6 @@
 #ifndef NORMALIZEPEAK_HPP
 #define NORMALIZEPEAK_HPP
 
-template<typename T>
-T clamp(T value, T minValue, T maxValue)
-{
-    if (value < minValue)
-        return minValue;
-    if (value > maxValue)
-        return maxValue;
-    return value;
-}
-
 class NormalizePeak
 {
 public:
@@ -19,6 +9,7 @@ public:
 
 	NormalizePeak(){};
 	float normalizeGlobalEnergie(float value) {
+        value = std::abs(value);
 		if (value > peakGlobalEnergie)
             peakGlobalEnergie = value;
         else

@@ -7,6 +7,7 @@ int main(void)
 	windowManager.initShader();
 	windowManager.initObjetBlender();
 	windowManager.initTexture();
+	windowManager.initVisualizer();
 	windowManager.init3D();
 	windowManager.initMusicEngine();
 	windowManager.initMusicAnayzer();

@@ -1,4 +1,4 @@
-#include "../include/Midi.hpp"
+#include "../include/midi/Midi.hpp"
 
 void parseFaceToken(const std::string &token, int &dinstrument, int &dnote, float &dstart, float &dend, int &dvelocity)
 {

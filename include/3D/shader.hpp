@@ -7,7 +7,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "structure.hpp"
+#include "../structure.hpp"
 #include "camera.hpp"
 
 extern Camera cam;

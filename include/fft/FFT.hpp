@@ -7,6 +7,7 @@
 #include <array>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 #include "DataAudio.hpp"
 #include "AudioStats.hpp"
 #include <limits>

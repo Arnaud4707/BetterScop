@@ -1,4 +1,4 @@
-#include "../include/FFT.hpp"
+#include "../include/fft/FFT.hpp"
 
 void parseFaceToken(const std::string &token, float &dtime, float &drms, float &dcentroid, float &drolloff, float &dzcr, float &dbass, float &dmid, float &dhight)
 {
@@ -34,17 +34,17 @@ void parseFaceToken(const std::string &token, float &dtime, float &drms, float &
 	}
 	if (std::getline(ss, f, ','))
 	{
-		if (!e.empty())
+		if (!f.empty())
 			dbass = std::stof(f);
 	}
 	if (std::getline(ss, g, ','))
 	{
-		if (!e.empty())
+		if (!g.empty())
 			dmid = std::stof(g);
 	}
 	if (std::getline(ss, h, ','))
 	{
-		if (!e.empty())
+		if (!h.empty())
 			dhight = std::stof(h);
 	}
 }
@@ -61,21 +61,30 @@ FFT::FFT(std::string text)
 	while (std::getline(file, line))
 	{
 		float time, rms, centroid, rolloff, zcr, bass, mid, high;
+		float cbass, cmid, chigh, crms, ccentroid;
+
 		try
 		{
 			parseFaceToken(line, time, rms, centroid, rolloff, zcr, bass, mid, high);
-			stats.minRms = std::min(stats.minRms, rms);
-			stats.maxRms = std::max(stats.maxRms, rms);
-			stats.minCentroid = std::min(stats.minCentroid, centroid);
-			stats.maxCentroid = std::max(stats.maxCentroid, centroid);
-			stats.minBass = std::min(stats.minBass, bass);
-			stats.maxBass = std::max(stats.maxBass, bass);
-			stats.minMid = std::min(stats.minMid, mid);
-			stats.maxMid = std::max(stats.maxMid, mid);
-			stats.minHigh = std::min(stats.minHigh, high);
-			stats.maxHigh = std::max(stats.maxHigh, high);
+			if (bass < 0 || mid < 0 || high < 0 || rms < 0)
+    			continue;
+			cbass = std::log1p(bass);
+			cmid = std::log1p(mid);
+			chigh = std::log1p(high);
+			crms = std::log1p(rms);
+			ccentroid = std::log1p(centroid);
+			stats.minRms = std::min(stats.minRms, crms);
+			stats.maxRms = std::max(stats.maxRms, crms);
+			stats.minCentroid = std::min(stats.minCentroid, ccentroid);
+			stats.maxCentroid = std::max(stats.maxCentroid, ccentroid);
+			stats.minBass = std::min(stats.minBass, cbass);
+			stats.maxBass = std::max(stats.maxBass, cbass);
+			stats.minMid = std::min(stats.minMid, cmid);
+			stats.maxMid = std::max(stats.maxMid, cmid);
+			stats.minHigh = std::min(stats.minHigh, chigh);
+			stats.maxHigh = std::max(stats.maxHigh, chigh);
 
-			DataAudio dfft(time, rms, centroid, rolloff, zcr, bass, mid, high);
+			DataAudio dfft(time, crms, ccentroid, rolloff, zcr, cbass, cmid, chigh);
 			fft.push_back(dfft);
 		}
 		catch (const std::exception &e)

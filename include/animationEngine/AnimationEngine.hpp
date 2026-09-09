@@ -2,17 +2,21 @@
 #define ANIMATIONENGINE_HPP
 
 #include "AnimationState.hpp"
-#include "MusicState.hpp"
+#include "../musicEngine/MusicState.hpp"
 
 class AnimationEngine
 {
 	private:
 		AnimationState state;
+		float color(float x)
+		{
+		    return 0.5f * (x + 1.f);
+		};
 
 	public:
 		AnimationState update(const MusicState &music, float dt){
 			(void)dt;
-			state.objectScale = 1.f + music.globalEnergy / 8;
+			state.objectScale = 1.f + music.global.energy ;
 			// state.objectScale = 1.f + (0.30f * music.drums.pulse) / 2  + (0.15f * music.bass.pulse) / 2;
 			// state.objectScale = 1.f + 0.25f * music.bass.pulse + 0.15f * music.drums.pulse;
 			// state.rotationSpeed = 0.3f + music.piano.movement * 2.f;
@@ -47,7 +51,7 @@ class AnimationEngine
     			state.cameraShake = 1.f;
 			state.cameraShake *= 0.92f;
 			
-			state.cameraZoom = 1.f - 0.1f * music.beat;
+			state.cameraZoom = 1.f - 0.1f * music.global.beat;
 
 			if(music.hihat)
 				state.particleRate += 30;

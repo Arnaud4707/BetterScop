@@ -1,6 +1,7 @@
 #ifndef ANIMATIONSTATE_HPP
 #define ANIMATIONSTATE_HPP
-#include "Vec3.hpp"
+
+#include "../vec/Vec3.hpp"
 
 struct AnimationState
 {

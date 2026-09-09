@@ -8,8 +8,8 @@
 #include <cmath>
 #include <sstream>
 #include <bits/stdc++.h>
-#include "structure.hpp"
-#include "fonction_math.hpp"
+#include "../structure.hpp"
+#include "../fonction_math.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 

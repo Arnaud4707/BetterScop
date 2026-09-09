@@ -52,6 +52,15 @@ float vertices[] = {
 	-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
 	-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
 
+float rectangle[] = {
+	0.f, -0.5f, 0.0f,
+	4.f, -0.5f, 0.0f, 
+	4.f, 0.f, 0.0f, 
+	4.f, 0.f, 0.0f, 
+	0.f, 0.f, 0.0f,
+	0.f, -0.5f, 0.0f
+};
+
 Camera		cam(vec3(0.7f, 1.5f, 8.7f));
 float		deltaTime = 0.0f;	// Time between current frame and last frame
 float		lastFrame = 0.0f;
@@ -60,6 +69,7 @@ bool wareFrame = false;
 float factor = 1.0;
 bool onTexture = false;
 Light		light;
+Jauge		EGlobal;
 
 Material	emerald;
 Material	jade;

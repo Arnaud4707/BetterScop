@@ -2,8 +2,6 @@
 #define WINDOWMANAGER_HPP
 
 #include "globals.hpp"
-#include "StatsHistory.hpp"
-#include "NormalizePeak.hpp"
 
 void	framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
@@ -85,6 +83,7 @@ class WindowManager
 		void initObjetBlender();
 		void initTexture();
 		void init3D();
+		void initVisualizer();
 		void startAudio();
 		void initMusicAnayzer();
 		void initMusicEngine();
@@ -108,6 +107,8 @@ void	processInputVisualizer(GLFWwindow *window, float *delta, Shader* ourShader,
 void	initMaterials(void);
 
 void vertexSansNT(GLFWwindow *window, ObjectBlender* obj, unsigned int *VBO, unsigned int *VAO, unsigned int *lightVAO, int size);
+
+void recVisualizer(GLFWwindow *window, unsigned int *VBO, unsigned int *VAO, int size);
 
 vec3 centerObj(ObjectBlender* obj);
 

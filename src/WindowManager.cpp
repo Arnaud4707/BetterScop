@@ -4,8 +4,12 @@ void	WindowManager::initShader()
 {
 	Shader ourShader("shader/shaderObjectSansNetT.vs", "shader/shaderObjectSansNetT.fs");
 	app.shaderObject = ourShader;
+	
 	Shader lightCubeShader("shader/shaderLightCube.vs", "shader/shaderLightCube.fs");
 	app.shaderLight = lightCubeShader;
+
+	Shader shaderVisualizer("shader/shaderVisualizer.vs", "shader/shaderVisualizer.fs");
+	visualizer.shaderObject = shaderVisualizer;
 
 	app.shaderObject.setDeltaTime(0.005);
 	app.shaderObject.setRotationSpeed(2.0);
@@ -19,6 +23,19 @@ void	WindowManager::initObjetBlender()
 			app.shaderObject.setVec3("color", vec3(1.0f));
 			// vertexdf(window, &obj, VBO, VAO, lightVAO, 2);
 			vertexSansNT(window, &app.object, app.render.VBO, app.render.VAO, app.render.lightVAO, 2);
+}
+
+void WindowManager::initVisualizer()
+{
+	EGlobal.position = vec3(-2.4f, 5.0f, 0.0f);
+	EGlobal.color = vec3(0.7, 0.7, 0.3);
+	recVisualizer(window, visualizer.render.VBO, visualizer.render.VAO, 1);
+	visualizer.render.projection = perspective(radians(45.f), visualizer.width / height, 0.1f, 100.f);
+	visualizer.render.view = cam.GetViewMatrix();
+	visualizer.shaderObject.use();
+	visualizer.shaderObject.setMat4("projection", visualizer.render.projection);
+    visualizer.shaderObject.setMat4("view", visualizer.render.view);
+
 }
 
 void	WindowManager::init3D()
@@ -51,7 +68,7 @@ void	WindowManager::init3D()
 		app.shaderObject.setVec3(specular, material.at(m.second).specular);
 		app.shaderObject.setFloat(shininess, material.at(m.second).shininess);
 	}
-	app.shaderObject.use();
+	// app.shaderObject.use();
 	// for none mat0
 	// ourShader.setVec3("material.ambient", mat.ambient);
 	// ourShader.setVec3("material.diffuse", mat.diffuse);
@@ -143,6 +160,12 @@ void	WindowManager::updateMusicAnalyzer()
 	analyzer.update(track.other, OTHER);
 	analyzer.update(track.vocals, VOCALS);
 	analyzer.updateGlobal(track);
+	analyzer.updateHistory(track.bass, BASS);
+	analyzer.updateHistory(track.drums, DRUMS);
+	analyzer.updateHistory(track.guitar, GUITAR);
+	analyzer.updateHistory(track.piano, PIANO);
+	analyzer.updateHistory(track.other, OTHER);
+	analyzer.updateHistory(track.vocals, VOCALS);
 }
 
 void WindowManager::updateAnimationEngine(float deltaTime)
@@ -214,9 +237,23 @@ void WindowManager::updateVisualizer(){
 	glClearColor(visualizer.color.x, visualizer.color.y, visualizer.color.z, visualizer.color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	StatsHistory history;
-
 	history.push(track);
 	NormalizePeak np;
-
-	std::cout << np.normalizeGlobalEnergie(track.globalEnergy) << std::endl;
+	visualizer.shaderObject.use();
+	// for (int i = 0; i < 3; i++){
+		float *tab = &track.global.energy;
+		float x = np.normalizeGlobalEnergie(tab[2]);
+    	visualizer.render.model = mat4(1.0f);
+		vec3 p = EGlobal.position;
+		p.y -= 1 * 0.5f; 
+    	visualizer.render.model = translate(visualizer.render.model, p);
+    	visualizer.render.model = scale(visualizer.render.model, vec3(x, 0.5f, 0.f)); // a smaller cube
+		visualizer.shaderObject.setVec3("color", EGlobal.color * x);
+    	visualizer.shaderObject.setMat4("model", visualizer.render.model);
+		
+		glBindVertexArray(visualizer.render.VAO[0]);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	// }
+	// std::cout << "track.global.energy: " << track.global.energy << " track.global.beat: " << track.global.beat << " track.global.brightness: " << track.global.brightness << std::endl;
+	// std::cout << "tab[0]: " << tab[0] << " tab[1]: " << tab[1] << " tab[2]: " << tab[2] << std::endl;
 }
